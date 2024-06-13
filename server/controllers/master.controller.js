@@ -1,6 +1,6 @@
 const { master_barang } = require("../models");
 
-class BarangController {
+class MasterController {
 	static async addBarang(req, res) {
 		try {
 			const data = req.body;
@@ -50,4 +50,4 @@ class BarangController {
 	}
 }
 
-module.exports = BarangController;
+module.exports = MasterController;

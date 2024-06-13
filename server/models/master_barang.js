@@ -4,6 +4,7 @@ module.exports = (sequelize, DataTypes) => {
 	class master_barang extends Model {
 		static associate(models) {
 			// define association here
+			master_barang.hasMany(models.transaksi_detail);
 		}
 	}
 	master_barang.init(
