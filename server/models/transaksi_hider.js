@@ -4,7 +4,6 @@ module.exports = (sequelize, DataTypes) => {
 	class transaksi_hider extends Model {
 		static associate(models) {
 			// define association here
-			transaksi_hider.hasMany(models.transaksi_detail);
 		}
 	}
 	transaksi_hider.init(

@@ -1,3 +1,4 @@
+const { Op } = require("sequelize");
 const { master_barang } = require("../models");
 
 class MasterController {
@@ -15,7 +16,16 @@ class MasterController {
 
 	static async findBarang(req, res) {
 		try {
-			const data = await master_barang.findAll();
+			const { q } = req.query;
+			let option = {};
+			if (q) {
+				option = {
+					where: {
+						nm_barang: { [Op.iLike]: `%${q}%` },
+					},
+				};
+			}
+			const data = await master_barang.findAll(option);
 			res.status(200).json(data);
 		} catch (error) {
 			res.status(500).json({

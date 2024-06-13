@@ -1,18 +1,17 @@
 const express = require("express");
-const MasterController = require("../controllers/master.controller");
-const TransController = require("../controllers/trans.contoller");
 const router = express.Router();
+const routerMaster = require("./route.master");
+const routerTransaksi = require("./route.transaksi");
 
 router.get("/", (req, res) => {
-	res.send("Hello World!");
+	res.send("API is running...");
 });
 
-router.post("/master", MasterController.addBarang);
-router.get("/master", MasterController.findBarang);
-router.put("/master/:id", MasterController.updateBarang);
-router.delete("/master/:id", MasterController.deleteBarang);
+router.use("/master", routerMaster);
+router.use("/transaksi", routerTransaksi);
 
-router.post("/transaksi", TransController.createTrans);
-router.get("/transaksi", TransController.findTrans);
+router.get("/*", (req, res) => {
+	res.send("Route not found.");
+});
 
 module.exports = router;
