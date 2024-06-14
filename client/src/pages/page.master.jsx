@@ -28,8 +28,8 @@ export default function PageMaster() {
 		e.preventDefault();
 		if (input.Qty !== 0) {
 			dispatch(addMaster(input, id));
-			dispatch(masterFetch());
 			navigate("/master");
+			dispatch(masterFetch());
 		} else {
 			Swal.fire("Minimun Qty 1 per-Barang");
 		}
@@ -37,6 +37,11 @@ export default function PageMaster() {
 
 	useEffect(() => {
 		dispatch(masterFetchId(id, setInput));
+		setInput({
+			nm_barang: "",
+			harga: 0,
+			Qty: 0,
+		});
 	}, [id]);
 
 	return (
