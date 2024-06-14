@@ -58,17 +58,24 @@ export default function PageTransaksi() {
 		},
 	]);
 	const [total, setTotal] = useState(0);
+	const [transactionDate, setTransactionDate] = useState("");
 
 	useEffect(() => {
+		// Fetch initial data
 		(async () => {
 			let url = "http://localhost:3000/master";
 			const res = await fetch(url);
 			const data = await res.json();
 			setData(data);
 		})();
+
+		// Set transaction date when component mounts
+		const currentDate = new Date().toLocaleDateString("id-ID");
+		setTransactionDate(currentDate);
 	}, []);
 
 	useEffect(() => {
+		// Calculate total price whenever rows change
 		const newTotal = rows.reduce(
 			(acc, row) => acc + row.price * row.quantity,
 			0
@@ -111,8 +118,8 @@ export default function PageTransaksi() {
 		<div className="h-screen w-full flex justify-center">
 			<div className="container">
 				<div>
-					<p>Id Transaksi: 0</p>
-					<p>Tanggal Transaksi: 01/01/2020</p>
+					<p>Id Transaksi: -</p>
+					<p>Tanggal Transaksi: {transactionDate}</p>
 					<p>
 						Total:{" "}
 						{new Intl.NumberFormat("id-ID", {
