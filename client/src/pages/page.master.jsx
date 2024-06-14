@@ -1,53 +1,48 @@
 import { useEffect, useState } from "react";
 import TableMaster from "../components/tables/table.master";
+import Swal from "sweetalert2";
+import {
+	addMaster,
+	masterFetch,
+	masterFetchId,
+} from "../redux/slices/masterSlice";
+import { useDispatch } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
 
 export default function PageMaster() {
+	const [params, setParams] = useState({});
+	const dispatch = useDispatch();
+	useEffect(() => {
+		dispatch(masterFetch(params));
+	}, [params]);
+
 	const [input, setInput] = useState({
 		nm_barang: "",
 		harga: 0,
 		Qty: 0,
 	});
-	const [params, setParams] = useState({});
-	const [data, setData] = useState([]);
-	useEffect(() => {
-		(async () => {
-			let url = "http://localhost:3000/master";
-			if (params.q) {
-				url += "?q=" + params.q;
-			}
-			const res = await fetch(url);
-			const data = await res.json();
-			setData(data);
-		})();
-	}, [params]);
 
-	const handleDelete = async (id) => {
-		await fetch(`http://localhost:3000/master/${id}`, {
-			method: "DELETE",
-		});
-		setData(data.filter((item) => item.id !== id));
-	};
-
+	const { id } = useParams();
+	const navigate = useNavigate();
 	const handleAdd = async (e) => {
 		e.preventDefault();
-		await fetch("http://localhost:3000/master", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify(input),
-		});
-		setInput({
-			nm_barang: "",
-			harga: 0,
-			Qty: 0,
-		});
-		setData([...data, input]);
+		if (input.Qty !== 0) {
+			dispatch(addMaster(input, id));
+			dispatch(masterFetch());
+			navigate("/master");
+		} else {
+			Swal.fire("Minimun Qty 1 per-Barang");
+		}
 	};
+
+	useEffect(() => {
+		dispatch(masterFetchId(id, setInput));
+	}, [id]);
 
 	return (
 		<div className="h-screen w-full flex justify-center">
-			<div className="container">
+			<div className="container mt-24">
+				<h1 className="font-bold">MASTER BARANG</h1>
 				<div>
 					<div className="w-full">
 						{/* SEARCH INPUT */}
@@ -73,6 +68,17 @@ export default function PageMaster() {
 										name="id"
 										disabled
 										className="border"
+										value={
+											id
+												? id >= 10
+													? `BR-00${id}`
+													: id >= 100
+													? `BR-0${id}`
+													: id >= 1000
+													? `BR-${id}`
+													: `BR-000${id}`
+												: ""
+										}
 									/>
 									<label htmlFor="id_barang">Nama Barang:</label>
 									<input
@@ -83,6 +89,7 @@ export default function PageMaster() {
 										onChange={(e) =>
 											setInput({ ...input, nm_barang: e.target.value })
 										}
+										value={input.nm_barang}
 									/>
 								</div>
 								<div className="flex flex-col">
@@ -95,6 +102,7 @@ export default function PageMaster() {
 										onChange={(e) =>
 											setInput({ ...input, harga: e.target.value })
 										}
+										value={input.harga}
 									/>
 									<label htmlFor="id_barang">Qty:</label>
 									<input
@@ -105,6 +113,7 @@ export default function PageMaster() {
 										onChange={(e) =>
 											setInput({ ...input, Qty: e.target.value })
 										}
+										value={input.Qty}
 									/>
 								</div>
 							</div>
@@ -115,11 +124,11 @@ export default function PageMaster() {
 				{/* BUTTON HANDLER */}
 				<div className="flex gap-4 py-2">
 					<button type="submit" onClick={handleAdd} className="btn btn-primary">
-						Add
+						{id ? "Save" : "Add"}
 					</button>
-					<button className="btn btn-primary">Save</button>
 				</div>
-				<TableMaster data={data} handleDelete={handleDelete} />
+				{/* TABLE MASTER */}
+				<TableMaster />
 			</div>
 		</div>
 	);

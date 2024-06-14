@@ -24,6 +24,12 @@ const router = createBrowserRouter([
 			{
 				path: "/master",
 				element: <PageMaster />,
+				children: [
+					{
+						path: ":id",
+						element: <PageMaster />,
+					},
+				],
 			},
 		],
 	},

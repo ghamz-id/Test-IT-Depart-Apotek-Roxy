@@ -17,15 +17,28 @@ class MasterController {
 	static async findBarang(req, res) {
 		try {
 			const { q } = req.query;
-			let option = {};
+			let option = { order: [["id", "ASC"]] };
 			if (q) {
 				option = {
 					where: {
 						nm_barang: { [Op.iLike]: `%${q}%` },
 					},
+					order: [["id", "ASC"]],
 				};
 			}
 			const data = await master_barang.findAll(option);
+			res.status(200).json(data);
+		} catch (error) {
+			res.status(500).json({
+				message: "Internal Server Error",
+			});
+		}
+	}
+
+	static async findBarangId(req, res) {
+		try {
+			const id = req.params.id;
+			const data = await master_barang.findByPk(id);
 			res.status(200).json(data);
 		} catch (error) {
 			res.status(500).json({

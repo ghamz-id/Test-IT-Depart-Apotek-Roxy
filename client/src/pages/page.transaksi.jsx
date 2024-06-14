@@ -1,6 +1,8 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import Swal from "sweetalert2";
+import { masterFetch } from "../redux/slices/masterSlice";
 
 export default function PageTransaksi() {
 	// ----------------- HANDLE INPUT -----------------
@@ -48,7 +50,11 @@ export default function PageTransaksi() {
 	};
 
 	// ----------------- LOGIC DISPLAY -----------------
-	const [data, setData] = useState([]);
+	const { dataMaster } = useSelector((item) => item.data);
+	const dispatch = useDispatch();
+	useEffect(() => {
+		dispatch(masterFetch());
+	}, []);
 	const [rows, setRows] = useState([
 		{
 			id: 0,
@@ -61,21 +67,11 @@ export default function PageTransaksi() {
 	const [transactionDate, setTransactionDate] = useState("");
 
 	useEffect(() => {
-		// Fetch initial data
-		(async () => {
-			let url = "http://localhost:3000/master";
-			const res = await fetch(url);
-			const data = await res.json();
-			setData(data);
-		})();
-
-		// Set transaction date when component mounts
 		const currentDate = new Date().toLocaleDateString("id-ID");
 		setTransactionDate(currentDate);
 	}, []);
 
 	useEffect(() => {
-		// Calculate total price whenever rows change
 		const newTotal = rows.reduce(
 			(acc, row) => acc + row.price * row.quantity,
 			0
@@ -101,7 +97,7 @@ export default function PageTransaksi() {
 	const handleSelectChange = (index, newId) => {
 		const updatedRows = rows.map((row, rowIndex) => {
 			if (rowIndex === index) {
-				const selectedItem = data.find((item) => item.id === +newId);
+				const selectedItem = dataMaster.find((item) => item.id === +newId);
 				return {
 					...row,
 					id: newId,
@@ -116,17 +112,41 @@ export default function PageTransaksi() {
 
 	return (
 		<div className="h-screen w-full flex justify-center">
-			<div className="container">
-				<div>
-					<p>Id Transaksi: -</p>
-					<p>Tanggal Transaksi: {transactionDate}</p>
-					<p>
-						Total:{" "}
-						{new Intl.NumberFormat("id-ID", {
-							style: "currency",
-							currency: "IDR",
-						}).format(total)}
-					</p>
+			<div className="container mt-24">
+				<h1 className="font-bold text-xl">TRANSAKSI</h1>
+				<div className="flex gap-10">
+					<div className="flex flex-col gap-2 py-4">
+						<div>
+							<p>Id Transaksi:</p>
+							<input
+								type="text"
+								className="border"
+								disabled
+								placeholder="auto generate"
+							/>
+						</div>
+						<div>
+							<p>Tanggal Transaksi:</p>
+							<input
+								type="text"
+								className="border"
+								disabled
+								value={transactionDate}
+							/>
+						</div>
+					</div>
+					<div className="py-4">
+						<p>Total:</p>
+						<input
+							type="text"
+							disabled
+							className="border h-7"
+							value={new Intl.NumberFormat("id-ID", {
+								style: "currency",
+								currency: "IDR",
+							}).format(total)}
+						/>
+					</div>
 				</div>
 				<div className="flex gap-4 py-2">
 					<button
@@ -140,10 +160,10 @@ export default function PageTransaksi() {
 						Save
 					</button>
 				</div>
-				<div className="overflow-y-auto border">
-					<table className="table">
-						<thead className="bg-blue-300 text-sm">
-							<tr>
+				<div className="overflow-x-auto max-h-96 border">
+					<table className="table table-pin-rows">
+						<thead className="text-sm">
+							<tr className="bg-blue-300">
 								<th>Id Barang</th>
 								<th>Nama Barang</th>
 								<th>Harga</th>
@@ -175,7 +195,7 @@ export default function PageTransaksi() {
 											<option disabled value={0}>
 												-
 											</option>
-											{data.map((item) => (
+											{dataMaster.map((item) => (
 												<option value={item.id} key={item.id}>
 													{item.nm_barang}
 												</option>
@@ -206,7 +226,7 @@ export default function PageTransaksi() {
 										/>
 									</td>
 									<td className="flex gap-2">
-										<button className="btn btn-warning btn-sm">Edit</button>
+										<button className="btn btn-disabled btn-sm">Edit</button>
 										<button
 											className="btn btn-error btn-sm"
 											onClick={() => handleDeleteRow(i)}

@@ -1,4 +1,16 @@
-export default function TableMaster({ data, handleDelete }) {
+import { useDispatch, useSelector } from "react-redux";
+import { masterFetch } from "../../redux/slices/masterSlice";
+import { Link } from "react-router-dom";
+
+export default function TableMaster() {
+	const { dataMaster } = useSelector((item) => item.data);
+	const dispatch = useDispatch();
+	const handleDelete = async (id) => {
+		await fetch(`http://localhost:3000/master/${id}`, {
+			method: "DELETE",
+		});
+		dispatch(masterFetch());
+	};
 	return (
 		<>
 			<div className="overflow-y-auto border">
@@ -13,7 +25,7 @@ export default function TableMaster({ data, handleDelete }) {
 						</tr>
 					</thead>
 					<tbody>
-						{data.map((item, i) => (
+						{dataMaster.map((item, i) => (
 							<tr className="hover" key={i}>
 								<td className="font-bold">
 									{item.id >= 10
@@ -33,7 +45,12 @@ export default function TableMaster({ data, handleDelete }) {
 								</td>
 								<td>{item.Qty}</td>
 								<td className="flex gap-2">
-									<button className="btn btn-warning btn-sm">Edit</button>
+									<Link
+										to={`/master/${item.id}`}
+										className="btn btn-warning btn-sm"
+									>
+										Edit
+									</Link>
 									<button
 										onClick={() => handleDelete(item.id)}
 										className="btn btn-error btn-sm"
