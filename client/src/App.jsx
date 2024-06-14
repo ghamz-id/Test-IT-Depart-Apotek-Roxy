@@ -1,17 +1,31 @@
 import * as React from "react";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import {
+	createBrowserRouter,
+	RouterProvider,
+	Navigate,
+} from "react-router-dom";
 import "./index.css";
 import PageMaster from "./pages/page.master";
 import PageTransaksi from "./pages/page.transaksi";
+import MainLayout from "./components/layout";
 
 const router = createBrowserRouter([
 	{
-		path: "/transaksi",
-		element: <PageTransaksi />,
-	},
-	{
-		path: "/master",
-		element: <PageMaster />,
+		element: <MainLayout />,
+		children: [
+			{
+				path: "/",
+				element: <Navigate to="/master" replace />,
+			},
+			{
+				path: "/transaksi",
+				element: <PageTransaksi />,
+			},
+			{
+				path: "/master",
+				element: <PageMaster />,
+			},
+		],
 	},
 ]);
 

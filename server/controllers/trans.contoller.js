@@ -35,6 +35,7 @@ class TransController {
 					);
 				})
 			);
+
 			await trans.update({ total: total }, { where: { id: trans.id } });
 			await Promise.all(response);
 			res.status(201).json({ message: "Transaksi Sukses!" });

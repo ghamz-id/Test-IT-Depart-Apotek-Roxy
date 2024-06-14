@@ -49,9 +49,8 @@ export default function PageMaster() {
 		<div className="h-screen w-full flex justify-center">
 			<div className="container">
 				<div>
-					<h1 className="font-bold text-xl">Master Barang</h1>
 					<div className="w-full">
-						{/* FITUR SEARCH */}
+						{/* SEARCH INPUT */}
 						<div className="flex flex-col">
 							<label htmlFor="search">Search</label>
 							<input
@@ -62,7 +61,6 @@ export default function PageMaster() {
 								onChange={(e) => setParams({ q: e.target.value })}
 							/>
 						</div>
-
 						{/* FORM */}
 						<form action={handleAdd}>
 							<div className="w-full flex gap-10">
@@ -71,6 +69,7 @@ export default function PageMaster() {
 									<input
 										type="text"
 										id="id_barang"
+										placeholder="auto generate"
 										name="id"
 										disabled
 										className="border"
@@ -110,8 +109,10 @@ export default function PageMaster() {
 								</div>
 							</div>
 						</form>
+						{/* END FORM */}
 					</div>
 				</div>
+				{/* BUTTON HANDLER */}
 				<div className="flex gap-4 py-2">
 					<button type="submit" onClick={handleAdd} className="btn btn-primary">
 						Add
